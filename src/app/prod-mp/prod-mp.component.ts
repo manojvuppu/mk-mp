@@ -11,6 +11,10 @@ export class ProdMpComponent implements OnInit {
 
   ngOnInit() {
     console.log('hi');
-    this.prodMpService.getAllProducts().subscribe((resp) => console.log(resp));
+    this.prodMpService.getAllProducts().subscribe(
+      (resp)=>{
+        console.log(resp);
+      }
+    )
   }
 }
