@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { combineLatest, map, Observable, of } from 'rxjs';
 import { prodMock } from './products';
 import { BehaviorSubject } from 'rxjs';
-import { AllProducts, appendUiSubCategory, mapProduct, Product, UiCategory, UiSubCategory } from './prod-model';
+import { AllProducts, appendUiSubCategory, isAllProducts, mapProduct, Product, removeUiCategory, removeUiSubCategory, UiCategory, UiSubCategory } from './prod-model';
 
 @Injectable({ providedIn: 'root' })
 export class ProdMpService {
@@ -43,6 +43,107 @@ export class ProdMpService {
 
   getProducts(): Observable<Product[]> {
     return this.productsSteam.asObservable();
+  }
+
+  getSelectedCategories(): Observable<UiCategory[]> {
+    return this.selectedCategoriesStream.asObservable();
+  }
+
+  getSelectedSubCategories(): Observable<UiSubCategory[]> {
+    return this.selectedSubCategoriesStream.asObservable();
+  }
+
+  getSearchText(): Observable<string> {
+    return this.searchStream.asObservable();
+  }
+
+  getSortBy(): Observable<[string, boolean]> {
+    return this.sortByStream.asObservable();
+  }
+  updateSearchText(text: string) {
+    this.searchStream.next(text);
+  }
+
+  updateCategory(uiCategory: UiCategory) {
+    this.updateSelectedCategories(uiCategory);
+  }
+
+  updateSubCategory(uiSubCategory: UiSubCategory) {
+    this.updateSelectedSubCategories(uiSubCategory);
+  }
+
+  updateSortBy(sortBy: [string, boolean]) {
+    this.sortByStream.next(sortBy);
+  }
+
+  private triggerSelecteCategoriesStream() {
+    this.selectedCategoriesStream.next(this.selectedCategories);
+  }
+
+  private triggerSelecteSubCategoriesStream() {
+    this.selectedSubCategoriesStream.next(this.selectedSubCategories);
+  }
+
+  private updateSelectedCategories(uiCategory: UiCategory) {
+    if (isAllProducts(uiCategory)) {
+      if (uiCategory.selected) {
+        this.selectedCategories.length = 0;
+        this.selectedCategories.push(uiCategory);
+        this.selectedSubCategories.length = 0;
+
+        this.triggerSelecteCategoriesStream();
+        this.triggerSelecteSubCategoriesStream();
+      } else {
+      }
+    } else {
+      if (uiCategory.selected) {
+        this.selectedCategories.push(uiCategory);
+      } else {
+        removeUiCategory(this.selectedCategories, uiCategory);
+        uiCategory.uiSubCategories.forEach((uiSubCat) => {
+          uiSubCat.selected = false;
+          removeUiSubCategory(this.selectedSubCategories, uiSubCat);
+        });
+
+        this.triggerSelecteSubCategoriesStream();
+      }
+
+      this.triggerSelecteCategoriesStream();
+    }
+
+    if (this.selectedCategories.length === 0) {
+      this.checkAllProductsCategory();
+    }
+  }
+
+  checkAllProductsCategory() {
+    this.CATEGORY_ALL_PRODUCTS.selected = true;
+  }
+
+  uncheckAllProductsCategory() {
+    this.CATEGORY_ALL_PRODUCTS.selected = false;
+  }
+
+  private updateSelectedSubCategories(uiSubCategory: UiSubCategory) {
+    if (uiSubCategory.selected) {
+      const ifExist = this.selectedSubCategories.find(
+        (selSubCat) => selSubCat.subCategory === uiSubCategory.subCategory
+      );
+      if (!ifExist) {
+        this.selectedSubCategories.push(uiSubCategory);
+      }
+    } else {
+      this.selectedCategories.forEach((selCat) => {
+        selCat.uiSubCategories.forEach((selSubCat) => {
+          if (selSubCat.subCategory === uiSubCategory.subCategory) {
+            selSubCat.selected = false;
+          }
+        });
+      });
+      removeUiSubCategory(this.selectedSubCategories, uiSubCategory);
+    }
+
+    this.triggerSelecteSubCategoriesStream();
   }
 
   listCategories(): Observable<any[]> {
@@ -167,21 +268,7 @@ export class ProdMpService {
     );
   }
   
-  getSortBy(): Observable<[string, boolean]> {
-    return this.sortByStream.asObservable();
-  }
 
-  getSearchText(): Observable<string> {
-    return this.searchStream.asObservable();
-  }
-
-  getSelectedCategories(): Observable<UiCategory[]> {
-    return this.selectedCategoriesStream.asObservable();
-  }
-
-  getSelectedSubCategories(): Observable<UiSubCategory[]> {
-    return this.selectedSubCategoriesStream.asObservable();
-  }
   
 }
 

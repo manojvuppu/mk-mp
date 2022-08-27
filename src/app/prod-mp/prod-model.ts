@@ -158,3 +158,35 @@ export const AllProducts: UiCategory = {
   selected: true,
   uiSubCategories: [],
 };
+
+export function isAllProducts(uiCagegory: UiCategory) {
+  return (
+    uiCagegory === AllProducts ||
+    uiCagegory.category === AllProductName ||
+    uiCagegory.category.name === AllProductName.name
+  );
+}
+
+export function removeUiCategory(
+  uiCategories: UiCategory[],
+  uiCategory: UiCategory
+) {
+  const foundIndex = uiCategories.findIndex(
+    (uiCat) => uiCat.category === uiCategory.category
+  );
+  if (foundIndex > -1) {
+    uiCategories.splice(foundIndex, 1);
+  }
+}
+
+export function removeUiSubCategory(
+  uiSubCategories: UiSubCategory[],
+  uiSubCategory: UiSubCategory
+) {
+  const foundIndex = uiSubCategories.findIndex(
+    (uiCat) => uiCat.subCategory === uiSubCategory.subCategory
+  );
+  if (foundIndex > -1) {
+    uiSubCategories.splice(foundIndex, 1);
+  }
+}
