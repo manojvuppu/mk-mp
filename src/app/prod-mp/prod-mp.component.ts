@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ProdMpService } from './prod-mp.service';
 
 @Component({
   selector: 'app-prod-mp',
@@ -6,7 +7,10 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./prod-mp.component.css'],
 })
 export class ProdMpComponent implements OnInit {
-  constructor() {}
+  constructor(private prodMpService: ProdMpService) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    console.log('hi');
+    this.prodMpService.getAllProducts().subscribe((resp) => console.log(resp));
+  }
 }

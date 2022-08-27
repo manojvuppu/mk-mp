@@ -7,9 +7,20 @@ import { ProdGridCardComponent } from './prod-grid-card/prod-grid-card.component
 import { ProdMpComponent } from './prod-mp.component';
 
 @NgModule({
-  imports: [
-    CommonModule
+  imports: [CommonModule],
+  declarations: [
+    ProdCategoriesComponent,
+    ProdFilterComponent,
+    ProdGridComponent,
+    ProdGridCardComponent,
+    ProdMpComponent,
   ],
-  declarations: [ProdCategoriesComponent,ProdFilterComponent,ProdGridComponent,ProdGridCardComponent,ProdMpComponent]
+  exports: [
+    ProdCategoriesComponent,
+    ProdFilterComponent,
+    ProdGridComponent,
+    ProdGridCardComponent,
+    ProdMpComponent,
+  ],
 })
-export class ProdMpModule { }
+export class ProdMpModule {}
