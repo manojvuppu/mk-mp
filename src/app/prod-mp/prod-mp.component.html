@@ -1,9 +1,26 @@
-<app-prod-grid></app-prod-grid>
-
 <div class="container">
-
-  <div class="row">
-
+  <div class="row flex-row justify-content-between">
+    <div>
+      <p>Solution Marketplace</p>
+    </div>
+    <div>
+      <input placeholder="Search Products" />
+    </div>
   </div>
-
+  <div class="row">
+    <p>Select 1 or more</p>
+  </div>
+  <hr />
+  <div class="row">
+    <app-prod-categories></app-prod-categories>
+  </div>
+  <hr />
+  <div class="row">
+    <div class="col-3">
+      <app-prod-filter></app-prod-filter>
+    </div>
+    <div class="col-9">
+      <app-prod-grid></app-prod-grid>
+    </div>
+  </div>
 </div>
