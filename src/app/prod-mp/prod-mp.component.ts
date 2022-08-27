@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Product, UiCategory } from './prod-model';
 import { ProdMpService } from './prod-mp.service';
 
 @Component({
@@ -7,14 +8,20 @@ import { ProdMpService } from './prod-mp.service';
   styleUrls: ['./prod-mp.component.css'],
 })
 export class ProdMpComponent implements OnInit {
+
+  uiCategories: UiCategory[] = [];
+  products: Product[] = [];
   constructor(private prodMpService: ProdMpService) {}
 
   ngOnInit() {
     console.log('hi');
-    this.prodMpService.getAllProducts().subscribe(
-      (resp)=>{
-        console.log(resp);
-      }
-    )
+   
+    this.prodMpService.getProducts()
+    .subscribe(products => {
+      this.products = products;
+      console.log('category - products', this.products);
+      // this.createUiCategoryAndFilter();
+    });
   }
+
 }
