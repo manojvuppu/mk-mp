@@ -229,3 +229,7 @@ export function findParentProductCategory(
 export function isNotEmptyValue(value: any): boolean {
   return !isEmptyValue(value);
 }
+
+export function createUiCategory(category: ProductCategory): UiCategory {
+  return { category, selected: false, uiSubCategories: [] };
+}

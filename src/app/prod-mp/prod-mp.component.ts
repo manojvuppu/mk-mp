@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Product, UiCategory } from './prod-model';
+import { appendUiSubCategory, createUiCategory, Product, UiCategory } from './prod-model';
 import { ProdMpService } from './prod-mp.service';
 
 @Component({
@@ -23,12 +23,45 @@ export class ProdMpComponent implements OnInit {
       // this.createUiCategoryAndFilter();
     });
    
-    this.prodMpService.listCategories()
-    .subscribe(categories => {
-      this.uiCategories = categories;
-      console.log('category - products', this.uiCategories);
-      // this.createUiCategoryAndFilter();
-    });
-  }
+    this.prodMpService.getAllCategories().subscribe((categories) => {
+      this.uiCategories = categories.filter((cat) => cat.isParent).map(createUiCategory);
+      categories
+        .filter((cat) => cat.isSubCategory)
+        .forEach((cat) => {
+          const found = this.uiCategories.find((uiCat) => uiCat.category.name === cat.parent);
+          if (found) {
+            appendUiSubCategory(found, cat.name, cat.displayName);
+          }
+        });
+
+      this.uiCategories.unshift(this.prodMpService.CategoryOfAllProducts);
+      console.log("session");
+      let _categories = sessionStorage.getItem("UIcategories");
+      console.log(_categories);
+      let categoryArr: any = [];
+      if (_categories)
+        categoryArr = _categories.includes(",") ? _categories.split(",") : [_categories];
+
+      categoryArr.forEach((selectedItems: any) => {
+        this.uiCategories.forEach((uicat, key) => {
+          if (uicat.category.displayName == selectedItems) {
+            uicat.selected = true;
+          }
+
+          if (uicat.category.displayName == "All Products") {
+            uicat.selected = false;
+          }
+
+          if (uicat.category.displayName != "All Products" && uicat.selected) {
+            this.prodMpService.updateCategory(uicat);
+          }
+          console.log("session");
+          
+          console.log(categoryArr);
+        });
+      });
+  
+  });
+}
 
 }

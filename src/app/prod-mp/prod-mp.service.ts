@@ -60,6 +60,10 @@ export class ProdMpService {
     return of(prodMock.products);
   }
 
+  get CategoryOfAllProducts() {
+    return this.CATEGORY_ALL_PRODUCTS;
+  }
+
   getProducts(): Observable<Product[]> {
     return this.productsSteam.asObservable();
   }
