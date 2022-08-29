@@ -15,11 +15,18 @@ export class ProdMpComponent implements OnInit {
 
   ngOnInit() {
     console.log('hi');
-   
+
     this.prodMpService.getProducts()
     .subscribe(products => {
       this.products = products;
       console.log('category - products', this.products);
+      // this.createUiCategoryAndFilter();
+    });
+   
+    this.prodMpService.listCategories()
+    .subscribe(categories => {
+      this.uiCategories = categories;
+      console.log('category - products', this.uiCategories);
       // this.createUiCategoryAndFilter();
     });
   }

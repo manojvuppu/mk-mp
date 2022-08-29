@@ -15,36 +15,51 @@ export interface Product {
 export function mapProduct(productImpl: any): Product {
   const image = _get(
     productImpl,
-    "marketing.defaultImage.content",
-    "images/our-solutions/aws-logo.svg"
+    'marketing.defaultImage.content',
+    'images/our-solutions/aws-logo.svg'
   );
-  const company = ""; //_getCustomField(productImpl, 'Seller', 'ABC');
-  const rating = _getCustomField(productImpl, "Rating", "3");
-  const fullName = _get(productImpl, "name");
-  const shortName = fullName.split("/").pop();
+  const company = ''; //_getCustomField(productImpl, 'Seller', 'ABC');
+  const rating = _getCustomField(productImpl, 'Rating', '3');
+  const fullName = _get(productImpl, 'name');
+  const shortName = fullName.split('/').pop();
 
   return {
-    name: _get(productImpl, "marketing.displayName"),
+    name: _get(productImpl, 'marketing.displayName'),
     categories: productImpl.categories,
     fullName,
     shortName,
     image,
     company,
     rating: Math.floor(Number(rating)),
-    description: _get(productImpl, "marketing.description"),
+    description: _get(productImpl, 'marketing.description'),
     createdDate: new Date(productImpl.createTime as any),
     updatedDate: new Date(productImpl.updateTime as any),
     $product: productImpl,
   };
 }
 
+export function mapProductCategory(category: any): ProductCategory {
+  const parent = _get(category, 'parent');
+  const parts = category.name.split('/');
+  parts.pop();
+
+  return {
+    name: category.name,
+    displayName: category.displayName,
+    $category: category,
+    parent: parent ? parts.join('/') + '/' + parent : '',
+    isParent: isEmptyValue(parent),
+    isSubCategory: isNotEmptyValue(parent),
+    children: null,
+  };
+}
 
 export function _get(
   obj: any,
   path: string | string[],
   defaultValue?: any
 ): any {
-  const paths = Array.isArray(path) ? path : path.split(".");
+  const paths = Array.isArray(path) ? path : path.split('.');
   const key = paths.splice(0, 1)[0];
   const value = obj.hasOwnProperty(key) ? obj[key] : undefined;
   return paths.length === 0
@@ -56,7 +71,7 @@ export function _get(
 
 // tslint:disable-next-line:no-any
 function _getCustomField(obj: any, field: string, defaultValue?: any): any {
-  const customFields: CustomField = _get(obj, "definition.customFields");
+  const customFields: CustomField = _get(obj, 'definition.customFields');
   if (!!customFields && Array.isArray(customFields) && customFields.length) {
     const found = customFields.find((cstField) => cstField.name === field);
     if (found) {
@@ -66,7 +81,6 @@ function _getCustomField(obj: any, field: string, defaultValue?: any): any {
 
   return defaultValue;
 }
-
 
 export interface CustomField {
   /**
@@ -94,24 +108,23 @@ export interface CustomField {
 }
 
 export type CustomFieldType =
-  'CUSTOM_FIELD_TYPE_UNSPECIFIED' |
+  | 'CUSTOM_FIELD_TYPE_UNSPECIFIED'
 
   // User defined string
-  'STRING' |
+  | 'STRING'
 
   // User uploaded private binary data
-  'PRIVATE_BINARY';
+  | 'PRIVATE_BINARY';
 
-
-  export interface ProductCategory {
-    name: string;
-    displayName: string;
-    $category: any | null;
-    parent: string;
-    isParent: boolean;
-    isSubCategory: boolean;
-    children: ProductCategory[] | null;
-  }
+export interface ProductCategory {
+  name: string;
+  displayName: string;
+  $category: any | null;
+  parent: string;
+  isParent: boolean;
+  isSubCategory: boolean;
+  children: ProductCategory[] | null;
+}
 
 export interface UiCategory {
   category: ProductCategory;
@@ -121,7 +134,7 @@ export interface UiCategory {
 
 export interface UiSubCategory {
   subCategory: string;
-  displayName?: string,
+  displayName?: string;
   selected: boolean;
   uiCategory: UiCategory;
 }
@@ -135,22 +148,26 @@ export function appendUiSubCategory(
     (uiSubCat) => uiSubCat.subCategory === subCategory
   );
   if (!uiSubCategory) {
-    uiSubCategory = { uiCategory, subCategory, selected: false, displayName: displayName || subCategory };
+    uiSubCategory = {
+      uiCategory,
+      subCategory,
+      selected: false,
+      displayName: displayName || subCategory,
+    };
     uiCategory.uiSubCategories.push(uiSubCategory);
   }
 
   return uiSubCategory;
 }
 
-
 export const AllProductName: ProductCategory = {
-  name: "All Products",
-  displayName: "All Products",
+  name: 'All Products',
+  displayName: 'All Products',
   $category: null as any,
   parent: '',
   isParent: false,
   isSubCategory: false,
-  children: null as any
+  children: null as any,
 };
 
 export const AllProducts: UiCategory = {
@@ -189,4 +206,26 @@ export function removeUiSubCategory(
   if (foundIndex > -1) {
     uiSubCategories.splice(foundIndex, 1);
   }
+}
+
+export function isEmptyValue(value: any): boolean {
+  return (
+    value === '' ||
+    value === null ||
+    value === undefined ||
+    (Array.isArray(value) && value.length === 0) ||
+    (typeof value === 'object' && Object.keys(value).length === 0)
+  );
+}
+
+export function findParentProductCategory(
+  productCategories: ProductCategory[],
+  parentName: string
+): ProductCategory | undefined {
+  return productCategories.find(
+    (prdCat) => prdCat.isParent && prdCat.name === parentName
+  );
+}
+export function isNotEmptyValue(value: any): boolean {
+  return !isEmptyValue(value);
 }

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { combineLatest, map, Observable, of } from 'rxjs';
 import { prodMock } from './products';
 import { BehaviorSubject } from 'rxjs';
-import { AllProducts, appendUiSubCategory, isAllProducts, mapProduct, Product, removeUiCategory, removeUiSubCategory, UiCategory, UiSubCategory } from './prod-model';
+import { AllProducts, appendUiSubCategory, findParentProductCategory, isAllProducts, mapProduct, mapProductCategory, Product, ProductCategory, removeUiCategory, removeUiSubCategory, UiCategory, UiSubCategory } from './prod-model';
 
 @Injectable({ providedIn: 'root' })
 export class ProdMpService {
@@ -33,6 +33,25 @@ export class ProdMpService {
   getAllProducts(): Observable<Product[]> {
     return this._getAllProducts().pipe(
       map((products) => products.map(mapProduct))
+    );
+  }
+  getAllCategories(): Observable<ProductCategory[]> {
+    return this.listCategories().pipe(
+      map((categories) => {
+        const productCategories = categories.map(mapProductCategory);
+        productCategories
+          .filter(prdCat => prdCat.isSubCategory)
+          .forEach(subCat => {
+            const found = findParentProductCategory(productCategories, subCat.parent);
+            if (found) {
+              found.children = found.children || [];
+              found.children.push(subCat);
+            }
+          });
+
+        console.log('ProductCategories:', productCategories);
+        return productCategories;
+      })
     );
   }
 
@@ -146,7 +165,7 @@ export class ProdMpService {
     this.triggerSelecteSubCategoriesStream();
   }
 
-  listCategories(): Observable<any[]> {
+  listCategories(): Observable<any[]>{
     return of(prodMock).pipe(
       map(({ categories }) => {
         return categories;
