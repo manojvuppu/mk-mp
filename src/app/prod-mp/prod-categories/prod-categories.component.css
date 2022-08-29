@@ -1,0 +1,33 @@
+:host {
+  display: block;
+  width: 100%;
+  min-height: 80px;
+  border-top: 1px solid gray;
+  border-bottom: 1px solid gray;
+  margin: 13px 0px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+.category-item {
+  padding: 8px 11px;
+  margin: 0px 12px 12px 0px;
+  font-size: 16px;
+  font-weight: 400;
+  height: 35px;
+}
+
+.category-selected {
+  color: white;
+  background: #01568c 0% 0% no-repeat padding-box;
+  cursor: hand;
+}
+
+.category-unselected {
+  color: blue;
+  background-color: white;
+  cursor: pointer;
+}
+span.category-item.category-unselected:hover {
+  color: purple;
+}

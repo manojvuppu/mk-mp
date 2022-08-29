@@ -55,6 +55,21 @@ export class ProdMpService {
     );
   }
 
+  clearAllFilters() {
+    this.selectedCategories.forEach((selCat) => {
+      selCat.selected = false;
+      selCat.uiSubCategories.forEach((selSubCat) => {
+        selSubCat.selected = false;
+      });
+    });
+  
+    this.selectedCategories.length = 0;
+    this.selectedSubCategories.length = 0;
+    this.triggerSelecteCategoriesStream();
+    this.triggerSelecteSubCategoriesStream();
+    this.checkAllProductsCategory();
+  }
+
   private _getAllProducts(): Observable<any[]> {
     // return of(pro);
     return of(prodMock.products);
@@ -363,3 +378,5 @@ function filterByCategories(
 
   return filterProducts;
 }
+
+

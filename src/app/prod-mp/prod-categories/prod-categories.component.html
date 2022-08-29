@@ -1,0 +1,10 @@
+<div class="container-fluid">
+<div class="row">
+  <span class="category-item"
+    [ngClass]="{'category-selected': uiCat.selected, 'category-unselected': !uiCat.selected}"
+    (click)="selectCategory(uiCat)"
+    *ngFor="let uiCat of uiCategories">
+    {{ uiCat.category.displayName }}
+  </span>
+</div>
+</div>

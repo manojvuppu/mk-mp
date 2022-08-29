@@ -35,31 +35,8 @@ export class ProdMpComponent implements OnInit {
         });
 
       this.uiCategories.unshift(this.prodMpService.CategoryOfAllProducts);
-      console.log("session");
-      let _categories = sessionStorage.getItem("UIcategories");
-      console.log(_categories);
-      let categoryArr: any = [];
-      if (_categories)
-        categoryArr = _categories.includes(",") ? _categories.split(",") : [_categories];
-
-      categoryArr.forEach((selectedItems: any) => {
-        this.uiCategories.forEach((uicat, key) => {
-          if (uicat.category.displayName == selectedItems) {
-            uicat.selected = true;
-          }
-
-          if (uicat.category.displayName == "All Products") {
-            uicat.selected = false;
-          }
-
-          if (uicat.category.displayName != "All Products" && uicat.selected) {
-            this.prodMpService.updateCategory(uicat);
-          }
-          console.log("session");
-          
-          console.log(categoryArr);
-        });
-      });
+      console.log('category', this.uiCategories);
+     
   
   });
 }

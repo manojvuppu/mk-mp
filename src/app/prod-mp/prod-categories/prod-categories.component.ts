@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { isAllProducts, UiCategory } from '../prod-model';
+import { ProdMpService } from '../prod-mp.service';
 
 @Component({
   selector: 'app-prod-categories',
@@ -7,9 +9,25 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ProdCategoriesComponent implements OnInit {
 
-  constructor() { }
+  @Input()
+  uiCategories: UiCategory[];
+
+  constructor(private marketplaceService:ProdMpService) { }
 
   ngOnInit() {
+  }
+
+  selectCategory(uiCat: UiCategory) {
+    if (uiCat && !uiCat.selected) {
+      uiCat.selected = true;
+
+      if (isAllProducts(uiCat)) {
+        this.marketplaceService.clearAllFilters();
+      } else {
+        this.marketplaceService.uncheckAllProductsCategory();
+        this.marketplaceService.updateCategory(uiCat);
+      }
+    }
   }
 
 }
